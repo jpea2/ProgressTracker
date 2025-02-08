@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div class="container">
+        <div id="heading">
+            <h1>Goal Tracker</h1>
+        
+            <!-- Add Goal Button -->
+            <button id="openModalBtn" class="add-goal-btn">Add New Goal</button>
+    
+        </div>
+
+        <!-- Modal Container -->
+        <div id="modalContainer" class="modal-container">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Create New Goal</h2>
+                    <button id="closeModalBtn" class="close-modal">&times;</button>
+                </div>
+                <!-- Goal Creation Form -->
+                <form id="goalForm" class="goal-form">
+                    <div class="form-group">
+                        <label for="title">Goal Title:</label>
+                        <input type="text" id="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="target">Target Value:</label>
+                        <input type="number" id="target" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Increment Values (comma-separated):</label>
+                        <input type="text" id="increments" placeholder="0.5,1,5" required>
+                    </div>
+
+                    <button type="submit">Create Goal</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Goals Container -->
+        <div id="goalsContainer" class="goals-container"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
