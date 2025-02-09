@@ -7,6 +7,30 @@ class GoalManager {
         this.renderGoals();
     }
 
+    handleDragEnd(card) {
+        card.classList.remove('dragging');
+        this.draggedGoal = null;
+        document.querySelectorAll('.goal-card').forEach(card => {
+            card.classList.remove('drag-over');
+        });
+    }
+
+    handleDragOver(card, index) {
+        if (this.draggedGoal !== null && this.draggedGoal !== index.toString()) {
+            card.classList.add('drag-over');
+        }
+    }
+
+    handleDrop(toIndex) {
+        const fromIndex = parseInt(this.draggedGoal);
+        if (fromIndex !== toIndex) {
+            const [movedGoal] = this.goals.splice(fromIndex, 1);
+            this.goals.splice(toIndex, 0, movedGoal);
+            this.saveGoals();
+            this.renderGoals();
+        }
+    }
+
     initEventListeners() {
         // Add Goal Modal controls
         const modalContainer = document.getElementById('modalContainer');
@@ -132,7 +156,7 @@ class GoalManager {
                                 </button>`
                             ).join('')}
                         </div>
-                        <img src="draganddropicon.png" alt="Drag and Drop" class="drag-icon" data-index="${index}" draggable="false">
+                        <img src="draganddropicon.png" alt="Drag and Drop" class="drag-icon" data-index="${index}">
                     </div>      
                 </div>
             `;
@@ -153,135 +177,23 @@ class GoalManager {
 
             // Add drag and drop event listeners for both desktop and mobile
             const dragIcon = card.querySelector('.drag-icon');
-            let touchStartY = 0;
-            let initialY = 0;
-            let isDragging = false;
-
-            // Desktop drag events
-            dragIcon.addEventListener('mousedown', (e) => {
-                isDragging = true;
+            dragIcon.setAttribute('draggable', 'true');
+            
+            // Desktop drag and drop
+            dragIcon.addEventListener('dragstart', (e) => {
                 this.draggedGoal = dragIcon.dataset.index;
                 card.classList.add('dragging');
-                initialY = card.getBoundingClientRect().top;
-                touchStartY = e.clientY;
-                e.preventDefault();
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', dragIcon.dataset.index);
             });
 
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                e.preventDefault();
-                const currentY = e.clientY;
-                const deltaY = currentY - touchStartY;
-                card.style.transform = `translateY(${deltaY}px)`;
-
-                // Find the card we're hovering over
-                const cards = [...document.querySelectorAll('.goal-card:not(.dragging)')];
-                const closestCard = cards.reduce((closest, child) => {
-                    const box = child.getBoundingClientRect();
-                    const offset = currentY - box.top - box.height / 2;
-                    if (offset < 0 && offset > closest.offset) {
-                        return { offset: offset, element: child };
-                    } else {
-                        return closest;
-                    }
-                }, { offset: Number.NEGATIVE_INFINITY }).element;
-
-                if (closestCard) {
-                    cards.forEach(c => c.classList.remove('drag-over'));
-                    closestCard.classList.add('drag-over');
-                }
-            });
-
-            document.addEventListener('mouseup', () => {
-                if (!isDragging) return;
-                isDragging = false;
-                card.style.transform = '';
-                card.classList.remove('dragging');
-
-                const dragOverCard = document.querySelector('.drag-over');
-                if (dragOverCard) {
-                    const fromIndex = parseInt(this.draggedGoal);
-                    const toIndex = parseInt(dragOverCard.dataset.index);
-
-                    if (fromIndex !== toIndex) {
-                        const [movedGoal] = this.goals.splice(fromIndex, 1);
-                        this.goals.splice(toIndex, 0, movedGoal);
-                        this.saveGoals();
-                        this.renderGoals();
-                    }
-                }
-
-                this.draggedGoal = null;
-                document.querySelectorAll('.goal-card').forEach(c => {
-                    c.classList.remove('drag-over');
-                });
-            });
-
-            // Mobile touch events
-            dragIcon.addEventListener('touchstart', (e) => {
-                isDragging = true;
-                this.draggedGoal = dragIcon.dataset.index;
-                card.classList.add('dragging');
-                initialY = card.getBoundingClientRect().top;
-                touchStartY = e.touches[0].clientY;
-                e.preventDefault();
-            }, { passive: false });
-
-            document.addEventListener('touchmove', (e) => {
-                if (!isDragging) return;
-                e.preventDefault();
-                const currentY = e.touches[0].clientY;
-                const deltaY = currentY - touchStartY;
-                card.style.transform = `translateY(${deltaY}px)`;
-
-                // Find the card we're hovering over
-                const cards = [...document.querySelectorAll('.goal-card:not(.dragging)')];
-                const closestCard = cards.reduce((closest, child) => {
-                    const box = child.getBoundingClientRect();
-                    const offset = currentY - box.top - box.height / 2;
-                    if (offset < 0 && offset > closest.offset) {
-                        return { offset: offset, element: child };
-                    } else {
-                        return closest;
-                    }
-                }, { offset: Number.NEGATIVE_INFINITY }).element;
-
-                if (closestCard) {
-                    cards.forEach(c => c.classList.remove('drag-over'));
-                    closestCard.classList.add('drag-over');
-                }
-            }, { passive: false });
-
-            document.addEventListener('touchend', () => {
-                if (!isDragging) return;
-                isDragging = false;
-                card.style.transform = '';
-                card.classList.remove('dragging');
-
-                const dragOverCard = document.querySelector('.drag-over');
-                if (dragOverCard) {
-                    const fromIndex = parseInt(this.draggedGoal);
-                    const toIndex = parseInt(dragOverCard.dataset.index);
-
-                    if (fromIndex !== toIndex) {
-                        const [movedGoal] = this.goals.splice(fromIndex, 1);
-                        this.goals.splice(toIndex, 0, movedGoal);
-                        this.saveGoals();
-                        this.renderGoals();
-                    }
-                }
-
-                this.draggedGoal = null;
-                document.querySelectorAll('.goal-card').forEach(c => {
-                    c.classList.remove('drag-over');
-                });
+            dragIcon.addEventListener('dragend', () => {
+                this.handleDragEnd(card);
             });
 
             card.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                if (this.draggedGoal !== null && this.draggedGoal !== index) {
-                    card.classList.add('drag-over');
-                }
+                this.handleDragOver(card, index);
             });
 
             card.addEventListener('dragleave', () => {
@@ -290,17 +202,46 @@ class GoalManager {
 
             card.addEventListener('drop', (e) => {
                 e.preventDefault();
-                const fromIndex = parseInt(this.draggedGoal);
-                const toIndex = parseInt(index);
-
-                if (fromIndex !== toIndex) {
-                    // Reorder the goals array
-                    const [movedGoal] = this.goals.splice(fromIndex, 1);
-                    this.goals.splice(toIndex, 0, movedGoal);
-                    this.saveGoals();
-                    this.renderGoals();
-                }
+                this.handleDrop(index);
             });
+
+            // Mobile touch events
+            let touchStartY = 0;
+            let initialIndex = 0;
+
+            dragIcon.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                touchStartY = e.touches[0].clientY;
+                this.draggedGoal = dragIcon.dataset.index;
+                initialIndex = parseInt(dragIcon.dataset.index);
+                card.classList.add('dragging');
+            }, { passive: false });
+
+            dragIcon.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+                const targetCard = elements.find(el => el.classList.contains('goal-card'));
+                
+                if (targetCard) {
+                    const targetIndex = Array.from(container.children).indexOf(targetCard);
+                    this.handleDragOver(targetCard, targetIndex);
+                }
+            }, { passive: false });
+
+            dragIcon.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                const touch = e.changedTouches[0];
+                const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+                const targetCard = elements.find(el => el.classList.contains('goal-card'));
+                
+                if (targetCard) {
+                    const targetIndex = Array.from(container.children).indexOf(targetCard);
+                    this.handleDrop(targetIndex);
+                }
+                
+                this.handleDragEnd(card);
+            }, { passive: false });
 
             container.appendChild(card);
         });
