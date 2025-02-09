@@ -122,13 +122,16 @@ class GoalManager {
                     </div>
                 </div>
                 <div class="button-group">
-                    ${goal.increments.map(value => 
-                        `<button class="increment-btn" 
-                                data-index="${index}" 
-                                data-value="${value}">
-                            +${value}
-                        </button>`
-                    ).join('')}
+                    <div class="incrementndrag-icon">
+                        ${goal.increments.map(value => 
+                            `<button class="increment-btn" 
+                                    data-index="${index}" 
+                                    data-value="${value}">
+                                +${value}
+                            </button>`
+                        ).join('')}
+                        <img src="draganddropicon.png" alt="Drag and Drop" class="drag-icon">
+                    </div>      
                 </div>
             `;
 

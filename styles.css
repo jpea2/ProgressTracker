@@ -286,3 +286,22 @@ button:hover {
     margin: 0;
     padding: 0;
 }
+
+.settings-row {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.drag-icon {
+    display: flex;
+    align-content: center;
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+}
+
+.incrementndrag-icon {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+}
