@@ -197,3 +197,45 @@ class GoalManager {
 
 // Initialize the app
 new GoalManager();
+
+
+async function forceUpdate() {
+    try {
+        // Show loading state
+        const button = event.target.closest('button');
+        const originalContent = button.innerHTML;
+        button.innerHTML = '<i class="spinning">↻</i> Updating...';
+        button.disabled = true;
+
+        // Unregister service worker
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+                await registration.unregister();
+            }
+        }
+
+        // Clear caches
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+        }
+
+        // Show success message
+        button.innerHTML = '✓ Updated!';
+        button.classList.add('success');
+
+        // Reload the page after a short delay
+        setTimeout(() => {
+            window.location.reload(true);
+        }, 1000);
+
+    } catch (error) {
+        console.error('Force update failed:', error);
+        alert('Update failed. Please try again.');
+        
+        // Reset button state
+        button.innerHTML = originalContent;
+        button.disabled = false;
+    }
+}

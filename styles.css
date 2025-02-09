@@ -267,3 +267,22 @@ button:hover {
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
 }
+
+
+.update-button {
+    width: 110px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    color: #666;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0;
+    padding: 0;
+}
