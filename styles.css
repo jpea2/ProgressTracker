@@ -9,7 +9,6 @@
 body {
     font-family: 'Segoe UI', system-ui, sans-serif;
     margin: 0;
-    padding: 20px;
     background-color: var(--background-color);
 }
 
@@ -34,6 +33,18 @@ body {
     align-items: center;
 }
 
+#headingContainer {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgb(65, 64, 64);
+    padding: 0px 20px;
+    font-size: 10px;
+    color: white;
+    border-bottom-right-radius: 7.5px;
+    border-bottom-left-radius: 7.5px;
+}
+
 .modal {
     background: var(--card-bg);
     padding: 25px;
@@ -43,6 +54,7 @@ body {
     max-width: 500px;
     position: relative;
     animation: modalFadeIn 0.3s ease-out;
+    margin: 1rem;
 }
 
 .modal-header {
@@ -66,7 +78,7 @@ body {
     color: #666;
 }
 
-#modalContainer {
+#modalContainer, #deleteConfirmModal {
     display: none;
 }
 
@@ -132,6 +144,25 @@ button:hover {
     background-color: #1976D2;
 }
 
+.danger-btn {
+    background-color: #dc3545;
+}
+
+.danger-btn:hover {
+    background-color: #c82333;
+}
+
+.modal-content {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
 /* Goals Container */
 .goals-container {
     display: grid;
@@ -148,7 +179,7 @@ button:hover {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
-    margin: 0;
+    margin: 0 1rem;
 }
 
 .progress-container {

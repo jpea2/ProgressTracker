@@ -1,12 +1,13 @@
 class GoalManager {
     constructor() {
         this.goals = JSON.parse(localStorage.getItem('goals')) || [];
+        this.goalToDelete = null;
         this.initEventListeners();
         this.renderGoals();
     }
 
     initEventListeners() {
-        // Modal controls
+        // Add Goal Modal controls
         const modalContainer = document.getElementById('modalContainer');
         const openModalBtn = document.getElementById('openModalBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -19,10 +20,39 @@ class GoalManager {
             modalContainer.style.display = 'none';
         });
 
-        // Close modal when clicking outside
+        // Close add goal modal when clicking outside
         modalContainer.addEventListener('click', (e) => {
             if (e.target === modalContainer) {
                 modalContainer.style.display = 'none';
+            }
+        });
+
+        // Delete Confirmation Modal controls
+        const deleteModal = document.getElementById('deleteConfirmModal');
+        const closeDeleteModalBtn = document.getElementById('closeDeleteModalBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+
+        closeDeleteModalBtn.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+        });
+
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+        });
+
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (this.goalToDelete !== null) {
+                this.removeGoal(this.goalToDelete);
+                this.goalToDelete = null;
+                deleteModal.style.display = 'none';
+            }
+        });
+
+        // Close delete modal when clicking outside
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                deleteModal.style.display = 'none';
             }
         });
 
@@ -111,8 +141,11 @@ class GoalManager {
 
             card.querySelector('.remove-btn').addEventListener('click', (e) => {
                 const index = e.target.dataset.index;
-                this.removeGoal(index);
+                this.goalToDelete = index;
+                document.getElementById('deleteConfirmModal').style.display = 'flex';
             });
+
+            
 
             container.appendChild(card);
         });
