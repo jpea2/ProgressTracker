@@ -2,6 +2,7 @@ class GoalManager {
     constructor() {
         this.goals = JSON.parse(localStorage.getItem('goals')) || [];
         this.goalToDelete = null;
+        this.draggedGoal = null;
         this.initEventListeners();
         this.renderGoals();
     }
@@ -145,7 +146,49 @@ class GoalManager {
                 document.getElementById('deleteConfirmModal').style.display = 'flex';
             });
 
-            
+            // Add drag and drop event listeners
+            card.setAttribute('draggable', 'true');
+            card.dataset.index = index;
+
+            card.addEventListener('dragstart', (e) => {
+                this.draggedGoal = index;
+                card.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', index);
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+                this.draggedGoal = null;
+                document.querySelectorAll('.goal-card').forEach(card => {
+                    card.classList.remove('drag-over');
+                });
+            });
+
+            card.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if (this.draggedGoal !== null && this.draggedGoal !== index) {
+                    card.classList.add('drag-over');
+                }
+            });
+
+            card.addEventListener('dragleave', () => {
+                card.classList.remove('drag-over');
+            });
+
+            card.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const fromIndex = parseInt(this.draggedGoal);
+                const toIndex = parseInt(index);
+
+                if (fromIndex !== toIndex) {
+                    // Reorder the goals array
+                    const [movedGoal] = this.goals.splice(fromIndex, 1);
+                    this.goals.splice(toIndex, 0, movedGoal);
+                    this.saveGoals();
+                    this.renderGoals();
+                }
+            });
 
             container.appendChild(card);
         });
