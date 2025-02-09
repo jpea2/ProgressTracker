@@ -181,7 +181,6 @@ button:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
     margin: 0 1rem;
-    cursor: move;
     user-select: none;
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -294,14 +293,20 @@ button:hover {
 
 .drag-icon {
     display: flex;
-    align-content: center;
+    align-items: center;
     width: 20px;
     height: 20px;
-    margin-left: 10px;
+    cursor: grab;
 }
 
 .incrementndrag-icon {
     display: flex;
-    align-content: center;
+    align-items: center;
     justify-content: space-between;
+    width: 100%;
+}
+
+.increment-buttons {
+    display: flex;
+    gap: 5px;
 }

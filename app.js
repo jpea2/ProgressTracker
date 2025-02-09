@@ -123,14 +123,16 @@ class GoalManager {
                 </div>
                 <div class="button-group">
                     <div class="incrementndrag-icon">
-                        ${goal.increments.map(value => 
-                            `<button class="increment-btn" 
-                                    data-index="${index}" 
-                                    data-value="${value}">
-                                +${value}
-                            </button>`
-                        ).join('')}
-                        <img src="draganddropicon.png" alt="Drag and Drop" class="drag-icon">
+                        <div class="increment-buttons">
+                            ${goal.increments.map(value => 
+                                `<button class="increment-btn" 
+                                        data-index="${index}" 
+                                        data-value="${value}">
+                                    +${value}
+                                </button>`
+                            ).join('')}
+                        </div>
+                        <img src="draganddropicon.png" alt="Drag and Drop" class="drag-icon" data-index="${index}">
                     </div>      
                 </div>
             `;
@@ -150,17 +152,17 @@ class GoalManager {
             });
 
             // Add drag and drop event listeners
-            card.setAttribute('draggable', 'true');
-            card.dataset.index = index;
+            const dragIcon = card.querySelector('.drag-icon');
+            dragIcon.setAttribute('draggable', 'true');
 
-            card.addEventListener('dragstart', (e) => {
-                this.draggedGoal = index;
+            dragIcon.addEventListener('dragstart', (e) => {
+                this.draggedGoal = dragIcon.dataset.index;
                 card.classList.add('dragging');
                 e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/plain', index);
+                e.dataTransfer.setData('text/plain', dragIcon.dataset.index);
             });
 
-            card.addEventListener('dragend', () => {
+            dragIcon.addEventListener('dragend', () => {
                 card.classList.remove('dragging');
                 this.draggedGoal = null;
                 document.querySelectorAll('.goal-card').forEach(card => {
